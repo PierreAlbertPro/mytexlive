@@ -11,6 +11,7 @@
 % and version 1.2 or later is part of all distributions of LaTeX version 
 %1999/12/01 or later.
 %
+% Copyleft (ↄ) 2017 by Pierre ALBERT <pierre(dot)albert(dot)pro(at)gmail(dot)com>
 % \fi
 
 % \iffalse
@@ -29,7 +30,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{445}
+% \CheckSum{547}
 %
 %% \CharacterTable
 %%  {Upper-case  \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -49,6 +50,7 @@
 %
 % \changes{v1.0}{2012/04/12}{Initial version}
 % \changes{v1.1}{2016/10/15}{Improvement about language compatibilities}
+% \changes{v1.2}{2017/04/21}{PA - Adaptation to create the UoE thesis template (extended localisation)}
 %
 % \GetFileInfo{mythesis.dtx}
 %
@@ -93,7 +95,7 @@
 % Finally, load the \xclass{book} class.
 %    \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
-\ProvidesClass{mythesis}[2016/10/15 v1.1 Thesis/memoir class]
+\ProvidesClass{mythesis}[2017/04/21 v1.2 Thesis/memoir class]
 %    \end{macrocode}
 %
 % Load \xpackage{my} package to load default configuration.
@@ -198,7 +200,7 @@
 %    \end{macrocode}
 %
 % \subsection{Configuration}
-% Configurate the review mode with a number each 5 lines. The counter reset on 
+% Configure the review mode with a number each 5 lines. The counter reset on 
 %each page.
 %    \begin{macrocode}
 \iftoggle{my@review@bool}{%
@@ -209,6 +211,29 @@
   }
 }{}
 %    \end{macrocode}
+%
+% \subsection{UoE configuration}
+% Set the spacing of the main text
+% one a half spacing
+% single space for quotes
+% font size in latex default 10pt
+%    \begin{macrocode}
+\RequirePackage{setspace}
+\onehalfspacing
+\expandafter\def\expandafter\quote\expandafter{\quote\singlespace}
+%    \end{macrocode}
+% \subsection{Margins configuration}
+% Configure the margins according to UoE's regulations
+%    \begin{macrocode}
+\setlength{\voffset}{-0.54cm}%	2cm head margin: 1 inch (2.54cm) + \voffset + \topmargin / 72.27pt - 0.54cm
+\setlength{\topmargin}{0pt}%	idem
+\addtolength{\textheight}{12.33pt}%	4cm tail margin
+\setlength{\hoffset}{-0.04cm}%	2,50cm left margin: 1 inch (2.54cm) + \hoffset + \topmargin / 72.27pt - 0.54cm
+\setlength{\evensidemargin}{0cm}%	4cm binding margin
+\setlength{\oddsidemargin}{1.5cm}
+\addtolength{\textwidth}{22.5647pt}%	2.5cm fore-edge margin
+%    \end{macrocode}
+%
 %
 % \subsection{Title page}
 % Some new fields to create the title page are needed to define the jury, the 
@@ -276,7 +301,7 @@
   \@ifnextchar[{\jurymember@i{#1}{#2}}{\jurymember@i{#1}{#2}[]}%
 }
 \def\jurymember@i#1#2[#3]#4#5#6{%
-  #1 & #2~\myname[#3]{#4} & (#5) \\[-0.67ex]%
+  #1 & #2~\myname[#3]{#4} & #5 \\[-0.67ex]%
   \multicolumn{3}{l}{%
     \hspace{0.33\textwidth}%
     \setlength{\parskip}{0.25ex plus 0.5ex minus 0.2ex}%
@@ -294,13 +319,28 @@
 %contains the optional logo (one on the left and one on the right).
 %    \begin{macrocode}
 \newcommand{\my@titlepage@top}{%
-  \ifdef{\@logoleft}{%
-    \vbox{\includegraphics[width=3cm]{\@logoleft}}%
-  }{}%
+%  \ifdef{\@logoleft}{%
+%    \vbox{\includegraphics[width=3cm]{\@logoleft}}%
+%  }{}%
+%  \hspace{\stretch{1}}%
+%  \ifdef{\@logoright}{%
+%    \vbox{\includegraphics[width=3cm]{\@logoright}}%
+%  }{}\par%
+  \begin{figure}[!htb]
+  \ifx\@logoleft\@empty%
+  \else%
+    \begin{minipage}[t]{0.20\textwidth}%
+     \includegraphics[width=\linewidth]{\@logoleft}%
+    \end{minipage}%
+  \fi%
   \hspace{\stretch{1}}%
-  \ifdef{\@logoright}{%
-    \vbox{\includegraphics[width=3cm]{\@logoright}}%
-  }{}\par%
+  \ifx\@logoright\@empty%
+  \else%
+  \begin{minipage}[t]{0.50\textwidth}%
+     \includegraphics[width=\linewidth]{\@logoright}%
+  \end{minipage}%
+  \fi\par%
+  \end{figure}%
 }
 %    \end{macrocode}
 %
@@ -308,17 +348,17 @@
 %    \begin{macrocode}
 \newcommand{\my@titlepage@bottom}{%
   \ifdef{\@date}{%
-    {\centering\normalsize Thèse soutenue le \@date\par}%
+    {\centering\normalsize \csname my@lang@\languagename @thesisSupportedA\endcsname \@date\par}%
     \ifdef{\@grade}{%
-      {\centering\small\it pour l'obtention du grade de\par}%
+      {\centering\small\it \csname my@lang@\languagename @thesisSupportedB\endcsname\par}%
       {\centering\large\bfseries \@grade\par}%
     }{}%
   }{}%
   \ifdef{\@jury}{%
     \ifdef{\@date}{%
-      {\centering\small\it en présence de\par}%
+      {\centering\small\it \csname my@lang@\languagename @thesisSupportedC\endcsname\par}%
     }{%
-      {\centering\normalsize\hspace{2cm}Jury constitué de\par}%
+      {\centering\normalsize\hspace{2cm}\csname my@lang@\languagename @thesisSupportedNODATE\endcsname\par}%
     }%
     \vspace{1ex}%
     {\normalsize\centering\begin{mytabular}{>{\hsize=0.3\textwidth}R>{\hsize=0.425\textwidth}L>{\hsize=0.2\textwidth}R}%
@@ -499,6 +539,18 @@
 \def\my@lang@francais@Keywords{Mots-clefs}
 \def\my@lang@canadien@Keywords{Mots-clefs}
 \def\my@lang@acadian@Keywords{Mots-clefs}
+\def\my@lang@french@thesisSupportedA{Thèse soutenue le}
+\def\my@lang@francais@thesisSupportedA{Thèse soutenue le}
+\def\my@lang@french@thesisSupportedB{pour l'obtention du grade de}
+\def\my@lang@francais@thesisSupportedB{pour l'obtention du grade de}
+\def\my@lang@french@thesisSupportedC{en présence de}
+\def\my@lang@francais@thesisSupportedC{en présence de}
+\def\my@lang@french@thesisSupportedNODATE{Jury constitué de}
+\def\my@lang@francais@thesisSupportedNODATE{Jury constitué de}
+
+
+
+
 %    \end{macrocode}
 %
 %\iffalse
@@ -525,6 +577,13 @@
 \def\my@lang@english@Abstract{Abstract}
 \def\my@lang@english@keywords{keywords}
 \def\my@lang@english@Keywords{Keywords}
+% TODO check official wording
+%\def\my@lang@english@thesisSupportedA{These defended on }
+%\def\my@lang@english@thesisSupportedA{}
+\def\my@lang@english@thesisSupportedB{for obtaining of the degree of}
+%\def\my@lang@english@thesisSupportedC{in presence of}
+\def\my@lang@english@thesisSupportedC{Review committee consisting of}
+\def\my@lang@english@thesisSupportedNODATE{Jury consisting of}
 \def\my@lang@USenglish@abstract{abstract}
 \def\my@lang@USenglish@Abstract{Abstract}
 \def\my@lang@USenglish@keywords{keywords}
@@ -541,6 +600,10 @@
 \def\my@lang@british@Abstract{Abstract}
 \def\my@lang@british@keywords{keywords}
 \def\my@lang@british@Keywords{Keywords}
+\def\my@lang@british@thesisSupportedA{These defended on }
+\def\my@lang@british@thesisSupportedB{for obtaining of the degree of}
+\def\my@lang@british@thesisSupportedC{in presence of}
+\def\my@lang@british@thesisSupportedNODATE{Jury consisting of}
 \def\my@lang@canadian@abstract{abstract}
 \def\my@lang@canadian@Abstract{Abstract}
 \def\my@lang@canadian@keywords{keywords}
