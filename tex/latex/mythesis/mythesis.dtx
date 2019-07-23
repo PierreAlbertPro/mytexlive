@@ -30,7 +30,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{547}
+% \CheckSum{585}
 %
 %% \CharacterTable
 %%  {Upper-case  \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -291,6 +291,18 @@
 \newcommand{\jury}[1]{\newrobustcmd{\@jury}{#1}}
 %    \end{macrocode}
 % \end{macro}
+% \begin{macro}{\docswitch}
+%   The \cs{docswitch} macro defines the type of document being generated.
+%    \begin{macrocode}
+\newcommand{\docswitch}[1]{\newrobustcmd{\@docswitch}{#1}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\presentationyear}
+%   The \cs{presentationyear} macro defines the year of presentation of the manuscript.
+%    \begin{macrocode}
+\newcommand{\presentationyear}[1]{\newrobustcmd{\@presentationyear}{#1}}
+%    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}{\jurymember}
 %   Moreover, the \cs{jury} macro should be filled with multiple member with 
@@ -347,15 +359,15 @@
 % The \cs{my@titlepage@bottom} contains the date of the defence and the jury.
 %    \begin{macrocode}
 \newcommand{\my@titlepage@bottom}{%
-  \ifdef{\@date}{%
+  \ifdef{\@docswitch}{%
     {\centering\normalsize \csname my@lang@\languagename @thesisSupportedA\endcsname \@date\par}%
-    \ifdef{\@grade}{%
-      {\centering\small\it \csname my@lang@\languagename @thesisSupportedB\endcsname\par}%
-      {\centering\large\bfseries \@grade\par}%
-    }{}%
+%    \ifdef{\@grade}{%
+%      {\centering\small\it \csname my@lang@\languagename @thesisSupportedB\endcsname\par}%
+%      {\centering\large\bfseries \@grade\par}%
+%    }{}%
   }{}%
   \ifdef{\@jury}{%
-    \ifdef{\@date}{%
+    \ifdef{\@presentationyear}{%
       {\centering\small\it \csname my@lang@\languagename @thesisSupportedC\endcsname\par}%
     }{%
       {\centering\normalsize\hspace{2cm}\csname my@lang@\languagename @thesisSupportedNODATE\endcsname\par}%
@@ -365,7 +377,18 @@
       \@jury%
     \end{mytabular}\par}%
   \vspace{1cm}%
-  }%
+  }{}%
+  \ifdef{\@grade}{%
+    {\raggedright\normalsize\textcolor{black!70}{\@grade}\par}%
+  }{}%
+  {\textcolor{myred}{\rule[0.5ex]{\textwidth}{1pt}}\par}%
+  \ifdef{\@university}{%
+    \ifdef{\@presentationyear}{%
+      {\raggedleft\normalsize\textcolor{black!70}{\@university\thinspace\--\thinspace\@presentationyear}\par}%
+    }{
+      {\raggedleft\normalsize\textcolor{black!70}{\@university}\par}%
+    }%
+  }{}%
 }
 %    \end{macrocode}
 %
@@ -374,19 +397,16 @@
 %    \begin{macrocode}
 \newcommand{\my@titlepage@body}{%
   \normalfont%
-  \ifdef{\@university}{%
-    {\raggedright\normalsize\textcolor{black!70}{\@university}\par}%
-  }{}%
   {\textcolor{myred}{\rule[0.5ex]{\textwidth}{1pt}}\par}%
-  \ifdef{\@author}{%
-    {\large\raggedleft \@author\par}%
-  }{}%
   \vfill%
   \ifdef{\@title}{%
     {\LARGE\centering \@title\par}%
   }{}%
   \ifdef{\@subtitle}{%
     {\vspace{0.5cm}\large\centering \@subtitle\par}%
+  }{}%
+  \ifdef{\@author}{%
+    {\large\centering \@author\par}%
   }{}%
 }
 %    \end{macrocode}
@@ -403,9 +423,9 @@
     \my@titlepage@top%
     \vfill%
     \my@titlepage@body%
-    \vfill%
+    \vspace*{\fill}%
     \my@titlepage@bottom%
-    \null%
+%    \null%
   \end{titlepage}%
   \clearpage%
   \thispagestyle{empty}%
@@ -431,12 +451,12 @@
 %    \end{macrocode}
 %
 % The |mykeywords| environment is to define the keywords of the document. The 
-%optional argument is the language of the abstract (multiple abstract in 
-%multiple language may be defined).
+%optional argument is the language of the abstract (multiple mykeywords in 
+%multiple languages may be defined).
 %    \begin{macrocode}
 \newenvironment{mykeywords}{%
-  \ifundef\expandafter{\csname my@lang@\languagename @Keywords\endcsname}{%
-    \ClassWarning{mythesis}{Unknown language used in 'mykeywords' environment}%
+  \ifdefvoid\expandafter{\csname my@lang@\languagename @Keywords \endcsname}{%
+    \ClassWarning{mythesis}{Unknown language used in \languagename 'mykeywords' environment}%
   }{}%
   \begin{myparagraph}[par-keywords-\languagename]{\csname my@lang@\languagename @Keywords\endcsname}
 }{%
@@ -452,6 +472,19 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% The |mylaysummary| environment is for the lay summary of the document. The 
+%optional argument is the language of the abstract (multiple mylaysummary in 
+%multiple languages may be defined).
+%    \begin{macrocode}
+\newenvironment{mylaysummary}{%
+  \ifdefvoid\expandafter{\csname my@lang@\languagename @Laysummary \endcsname}{%
+    \ClassWarning{mythesis}{Unknown language used in \languagename 'mylaysummary' environment}%
+  }{}%
+  \begin{myparagraph}[par-laysummary-\languagename]{\csname my@lang@\languagename @Laysummary\endcsname}
+}{%
+  \end{myparagraph}
+}
+%    \end{macrocode}
 % Redefine the default spacing of the paragraphs.
 %    \begin{macrocode}
 \setlength{\parindent}{0cm}
@@ -539,6 +572,10 @@
 \def\my@lang@francais@Keywords{Mots-clefs}
 \def\my@lang@canadien@Keywords{Mots-clefs}
 \def\my@lang@acadian@Keywords{Mots-clefs}
+\def\my@lang@french@laysummary{résumé vulgarisé}
+\def\my@lang@francais@laysummary{résumé vulgarisé}
+\def\my@lang@french@Laysummary{Résumé vulgarisé}
+\def\my@lang@francais@Laysummary{Résumé vulgarisé}
 \def\my@lang@french@thesisSupportedA{Thèse soutenue le}
 \def\my@lang@francais@thesisSupportedA{Thèse soutenue le}
 \def\my@lang@french@thesisSupportedB{pour l'obtention du grade de}
@@ -547,10 +584,6 @@
 \def\my@lang@francais@thesisSupportedC{en présence de}
 \def\my@lang@french@thesisSupportedNODATE{Jury constitué de}
 \def\my@lang@francais@thesisSupportedNODATE{Jury constitué de}
-
-
-
-
 %    \end{macrocode}
 %
 %\iffalse
@@ -571,12 +604,14 @@
 \ProvidesFile{mythesis-english.def}[2012/04/18 v1.0 English localization for 'mythesis' class]
 %    \end{macrocode}
 %
-% Define the name which will be used.
+% Define the name which will be used (case sensitive.
 %    \begin{macrocode}
 \def\my@lang@english@abstract{abstract}
 \def\my@lang@english@Abstract{Abstract}
 \def\my@lang@english@keywords{keywords}
 \def\my@lang@english@Keywords{Keywords}
+\def\my@lang@english@laysummary{lay summary}
+\def\my@lang@english@Laysummary{Lay summary}
 % TODO check official wording
 %\def\my@lang@english@thesisSupportedA{These defended on }
 %\def\my@lang@english@thesisSupportedA{}

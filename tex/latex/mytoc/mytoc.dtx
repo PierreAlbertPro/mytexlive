@@ -29,7 +29,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{183}
+% \CheckSum{184}
 %
 %% \CharacterTable
 %%  {Upper-case  \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -97,7 +97,7 @@
 %
 % Load \xpackage{my} package to load default configuration.
 %    \begin{macrocode}
-\RequirePackageWithOptions{my}[2011/12/08]
+\RequirePackageWithOptions{my}[2017/06/13]
 %    \end{macrocode}
 %
 % If language options are not called, the default language is loaded (the 
@@ -260,6 +260,7 @@
 % Define the |mychapter| environment in place of the |\chapter| macro.
 %    \begin{macrocode}
 \newenvironment{mychapter}[2][]{%
+	\newpage%
 	\cleardoublepage%
 	\chapter{#2}%
 	\label{#1}%
