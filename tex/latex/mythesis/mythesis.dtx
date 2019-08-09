@@ -440,9 +440,6 @@
 %    \begin{macrocode}
 \newenvironment{myabstract}[1][french]{%
   \begin{otherlanguage}{#1}%
-  \ifundef\expandafter{\csname my@lang@\languagename @Abstract\endcsname}{%
-    \ClassWarning{mythesis}{Unknown language used in 'myabstract' environment}%
-  }{}%
   \begin{mychapter+}[cha-abstract-\languagename]{\csname my@lang@\languagename @Abstract\endcsname}
 }{%
   \end{mychapter+}
@@ -455,9 +452,6 @@
 %multiple languages may be defined).
 %    \begin{macrocode}
 \newenvironment{mykeywords}{%
-  \ifdefvoid\expandafter{\csname my@lang@\languagename @Keywords \endcsname}{%
-    \ClassWarning{mythesis}{Unknown language used in \languagename 'mykeywords' environment}%
-  }{}%
   \begin{myparagraph}[par-keywords-\languagename]{\csname my@lang@\languagename @Keywords\endcsname}
 }{%
   \end{myparagraph}
@@ -477,9 +471,6 @@
 %multiple languages may be defined).
 %    \begin{macrocode}
 \newenvironment{mylaysummary}{%
-  \ifdefvoid\expandafter{\csname my@lang@\languagename @Laysummary \endcsname}{%
-    \ClassWarning{mythesis}{Unknown language used in \languagename 'mylaysummary' environment}%
-  }{}%
   \begin{myparagraph}[par-laysummary-\languagename]{\csname my@lang@\languagename @Laysummary\endcsname}
 }{%
   \end{myparagraph}
@@ -528,7 +519,8 @@
 	\@ifpackageloaded{biblatex}{%
 		\renewbibmacro{begentry}{%
 			\hspace{-2em}\printtext[brackets]{%
-				\printnames{labelname}~\usebibmacro{cite:labelyear+extrayear}%
+%				\printnames{labelname}~\usebibmacro{cite:labelyear+extrayear}%
+				\printnames{labelname}~\usebibmacro{cite:labeldate+extradate}%
 			}%
 			\newline%
 		}
