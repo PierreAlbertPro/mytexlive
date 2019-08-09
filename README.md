@@ -162,6 +162,7 @@ The only requirement is to fill in EITHER Document related information OR Thesis
 # Building the document
 To generate the PDF of the document:
 In `TexMaker`, press the build button
-![Highlight of the build button](https://github.com/PierreAlbertPro/mytexlive/tree/UoE/TexMaker-build.png)
 
-If some terms are to be added to the glossary or list of accronyms, run `makeglossaries` (press alt+shift+F1), then build the document again.
+![Highlight of the build button](TexMaker-build.png)
+
+If new terms need to be added to the glossary or list of accronyms, run `makeglossaries` (press alt+shift+F1), then build the document again.
